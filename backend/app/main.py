@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from uuid import uuid4
-from datetime import date
+from datetime import date as dt_date
 from sqlmodel import SQLModel, Field, Session, create_engine, select
 
 from .core.config import settings
@@ -10,7 +10,7 @@ from .core.config import settings
 class ExpenseBase(SQLModel):
     description: str
     amount: float
-    date: date = date.today()
+    date: dt_date = Field(default_factory=dt_date.today)
 
 class Expense(ExpenseBase, table=True):
     id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
