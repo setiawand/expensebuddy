@@ -31,3 +31,23 @@ npm run dev
 
 Open `http://localhost:3000` in your browser. The page allows you to view and add expenses using the backend API.
 
+## Docker
+
+Docker configurations are provided for development and production.
+
+### Development
+
+Run the services with hot-reload using the development compose file:
+
+```bash
+docker compose -f docker-compose.dev.yml up --build
+```
+
+### Production
+
+Build optimized images and run them with:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+

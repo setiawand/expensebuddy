@@ -11,9 +11,10 @@ export default function Home() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   useEffect(() => {
-    fetch("http://localhost:8000/expenses")
+    fetch(`${API_URL}/expenses`)
       .then((res) => res.json())
       .then(setExpenses)
       .catch(() => {});
@@ -21,7 +22,7 @@ export default function Home() {
 
   async function addExpense(e: FormEvent) {
     e.preventDefault();
-    const resp = await fetch("http://localhost:8000/expenses", {
+    const resp = await fetch(`${API_URL}/expenses`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description, amount: parseFloat(amount) }),
