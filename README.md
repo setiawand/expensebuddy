@@ -10,13 +10,13 @@ SQLite database for persistence. To run it locally:
 ```bash
 cd backend
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8001
+uvicorn app.main:app --reload --port 8004
 ```
 
 An `expenses.db` SQLite file will be created automatically in the `backend`
 folder to store your data.
 
-The API will start on `http://localhost:8001` with the following endpoints:
+The API will start on `http://localhost:8004` with the following endpoints:
 
 - `GET /expenses` – list expenses
 - `POST /expenses` – create a new expense

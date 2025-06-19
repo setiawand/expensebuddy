@@ -12,7 +12,7 @@ export default function Home() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8004";
 
   useEffect(() => {
     fetch(`${API_URL}/expenses`)
