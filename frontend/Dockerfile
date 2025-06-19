@@ -10,6 +10,7 @@ RUN npm run build
 FROM node:18-alpine AS prod
 WORKDIR /app
 ENV NODE_ENV=production
+ENV PORT=3001
 COPY --from=build /app .
-EXPOSE 3000
+EXPOSE 3001
 CMD ["npm", "start"]
