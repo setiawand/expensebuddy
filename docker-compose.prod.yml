@@ -4,12 +4,12 @@ services:
     build:
       context: ./backend
     ports:
-      - "8001:8001"
+      - "8004:8004"
   frontend:
     build:
       context: ./frontend
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8001
+      - NEXT_PUBLIC_API_URL=http://backend:8004
       - PORT=3001
     ports:
       - "3001:3001"

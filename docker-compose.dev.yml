@@ -3,11 +3,11 @@ services:
   backend:
     build:
       context: ./backend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8004 --reload
     volumes:
       - ./backend:/app
     ports:
-      - "8001:8001"
+      - "8004:8004"
   frontend:
     build:
       context: ./frontend
@@ -17,7 +17,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8001
+      - NEXT_PUBLIC_API_URL=http://backend:8004
       - PORT=3001
     depends_on:
       - backend
