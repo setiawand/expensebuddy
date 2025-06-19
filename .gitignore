@@ -1,0 +1,17 @@
+# node
+node_modules/
+frontend/.next/
+frontend/.env.local
+
+# python
+backend/__pycache__/
+backend/.venv/
+backend/*.py[cod]
+backend/env.*
+
+# docker
+*.log
+docker-compose.override.yml
+
+# general
+.env
