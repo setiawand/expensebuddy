@@ -10,13 +10,13 @@ SQLite database for persistence. To run it locally:
 ```bash
 cd backend
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 8001
 ```
 
 An `expenses.db` SQLite file will be created automatically in the `backend`
 folder to store your data.
 
-The API will start on `http://localhost:8000` with the following endpoints:
+The API will start on `http://localhost:8001` with the following endpoints:
 
 - `GET /expenses` – list expenses
 - `POST /expenses` – create a new expense
@@ -33,7 +33,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser. The page allows you to view and add expenses using the backend API.
+Open `http://localhost:3001` in your browser. The page allows you to view and add expenses using the backend API.
 
 ## Docker
 
