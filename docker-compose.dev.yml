@@ -18,7 +18,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8004
+      - NEXT_PUBLIC_API_URL=http://expensebuddy-backend-1:8004
       - PORT=3001
     depends_on:
       - backend
