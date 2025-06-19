@@ -1,19 +1,25 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from typing import List
 from uuid import uuid4
 from datetime import date
+from sqlmodel import SQLModel, Field, Session, create_engine, select
 
 from .core.config import settings
 
-class ExpenseBase(BaseModel):
+class ExpenseBase(SQLModel):
     description: str
     amount: float
     date: date = date.today()
 
-class Expense(ExpenseBase):
+class Expense(ExpenseBase, table=True):
+    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
+
+class ExpenseRead(ExpenseBase):
     id: str
+
+class ExpenseCreate(ExpenseBase):
+    pass
 
 app = FastAPI(title=settings.app_name)
 
@@ -25,29 +31,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-_expenses: List[Expense] = []
+engine = create_engine("sqlite:///./expenses.db")
 
-@app.get("/expenses", response_model=List[Expense])
-def list_expenses() -> List[Expense]:
-    return _expenses
+def create_db_and_tables() -> None:
+    SQLModel.metadata.create_all(engine)
 
-@app.post("/expenses", response_model=Expense)
-def create_expense(expense: ExpenseBase) -> Expense:
-    new_expense = Expense(id=str(uuid4()), **expense.model_dump())
-    _expenses.append(new_expense)
-    return new_expense
+@app.on_event("startup")
+def on_startup() -> None:
+    create_db_and_tables()
 
-@app.get("/expenses/{expense_id}", response_model=Expense)
-def get_expense(expense_id: str) -> Expense:
-    for expense in _expenses:
-        if expense.id == expense_id:
-            return expense
-    raise HTTPException(status_code=404, detail="Expense not found")
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+@app.get("/expenses", response_model=List[ExpenseRead])
+def list_expenses(session: Session = Depends(get_session)) -> List[Expense]:
+    expenses = session.exec(select(Expense)).all()
+    return expenses
+
+@app.post("/expenses", response_model=ExpenseRead)
+def create_expense(expense: ExpenseCreate, session: Session = Depends(get_session)) -> Expense:
+    db_expense = Expense.from_orm(expense)
+    session.add(db_expense)
+    session.commit()
+    session.refresh(db_expense)
+    return db_expense
+
+@app.get("/expenses/{expense_id}", response_model=ExpenseRead)
+def get_expense(expense_id: str, session: Session = Depends(get_session)) -> Expense:
+    expense = session.get(Expense, expense_id)
+    if not expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return expense
 
 @app.delete("/expenses/{expense_id}", status_code=204)
-def delete_expense(expense_id: str) -> None:
-    for i, expense in enumerate(_expenses):
-        if expense.id == expense_id:
-            del _expenses[i]
-            return
-    raise HTTPException(status_code=404, detail="Expense not found")
+def delete_expense(expense_id: str, session: Session = Depends(get_session)) -> None:
+    expense = session.get(Expense, expense_id)
+    if not expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    session.delete(expense)
+    session.commit()

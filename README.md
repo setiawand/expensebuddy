@@ -4,13 +4,17 @@ This project is a simple expense tracking application with a FastAPI backend and
 
 ## Backend
 
-The backend is located in the `backend` directory and uses **FastAPI**. To run it locally:
+The backend is located in the `backend` directory and uses **FastAPI** with a
+SQLite database for persistence. To run it locally:
 
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
+
+An `expenses.db` SQLite file will be created automatically in the `backend`
+folder to store your data.
 
 The API will start on `http://localhost:8000` with the following endpoints:
 
