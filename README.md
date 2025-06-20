@@ -35,6 +35,18 @@ npm run dev
 
 Open `http://localhost:3001` in your browser. The page allows you to view and add expenses using the backend API.
 
+### Google Login
+
+The frontend uses **NextAuth.js** with Google as an authentication provider. Create a `.env` file inside the `frontend` directory based on `.env.example` and fill in your Google OAuth credentials:
+
+```
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+NEXTAUTH_SECRET=some-random-string
+```
+
+After setting the variables run `npm install` to install dependencies (including `next-auth`) and start the dev server with `npm run dev`.
+
 ## Docker
 
 Docker configurations are provided for development and production.
