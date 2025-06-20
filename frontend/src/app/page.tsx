@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, FormEvent } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 interface Expense {
   id: string;
@@ -9,6 +10,7 @@ interface Expense {
 }
 
 export default function Home() {
+  const { data: session } = useSession();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -38,6 +40,21 @@ export default function Home() {
 
   return (
     <main className="p-8">
+      {!session ? (
+        <button
+          onClick={() => signIn("google")}
+          className="border px-2 mb-4"
+        >
+          Sign in with Google
+        </button>
+      ) : (
+        <div className="mb-4">
+          <span className="mr-2">Hello, {session.user?.name}</span>
+          <button className="border px-2" onClick={() => signOut()}>
+            Sign out
+          </button>
+        </div>
+      )}
       <h1 className="text-2xl font-bold mb-4">Expenses</h1>
       <ul className="mb-4">
         {expenses.map((exp) => (
