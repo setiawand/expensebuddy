@@ -59,7 +59,7 @@ export default function Home() {
       <ul className="mb-4">
         {expenses.map((exp) => (
           <li key={exp.id} className="mb-1">
-            {exp.description} - ${'{'}exp.amount.toFixed(2){'}'}
+            {exp.description} - ${exp.amount.toFixed(2)}
           </li>
         ))}
       </ul>
