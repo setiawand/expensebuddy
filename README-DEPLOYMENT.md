@@ -184,19 +184,43 @@ docker system df
 
 # Check largest directories
 du -sh /* 2>/dev/null | sort -hr | head -10
-``` and Troubleshooting
+## 🔍 Monitoring and Troubleshooting
+
+### Health Check Process
+
+The deployment includes robust health checks with:
+- **10 retry attempts** for each service
+- **15-second intervals** between attempts
+- **10-second connection timeout** per attempt
+- **30-second maximum time** per request
+- **Automatic log display** on failure
 
 ### Check Service Status
+
 ```bash
-# View running containers
-docker-compose -f docker-compose.prod.yml ps
+# Check if containers are running
+docker compose -f docker-compose.prod.yml ps
 
-# View logs
-docker-compose -f docker-compose.prod.yml logs -f
+# Check service logs
+docker compose -f docker-compose.prod.yml logs -f frontend
+docker compose -f docker-compose.prod.yml logs -f backend
 
-# View specific service logs
-docker-compose -f docker-compose.prod.yml logs -f frontend
-docker-compose -f docker-compose.prod.yml logs -f backend
+# Check specific container logs
+docker logs expensebuddy-frontend-1
+docker logs expensebuddy-backend-1
+```
+
+### Manual Health Checks
+
+```bash
+# Test frontend
+curl -f http://localhost:3000
+
+# Test backend API
+curl -f http://localhost:8004/docs
+
+# Test backend health endpoint
+curl -f http://localhost:8004/health
 ```
 
 ### Common Issues

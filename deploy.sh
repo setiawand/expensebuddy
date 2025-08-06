@@ -62,21 +62,49 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 # Wait for services to be ready
 print_status "Waiting for services to start..."
-sleep 30
+sleep 45
 
-# Health check
+# Health check with retries
 print_status "Performing health check..."
-if curl -f http://localhost:3000 > /dev/null 2>&1; then
-    print_status "✅ Frontend is running successfully!"
-else
-    print_error "❌ Frontend health check failed!"
+
+# Function to check service with retries
+check_service() {
+    local url=$1
+    local service_name=$2
+    local max_attempts=10
+    local attempt=1
+    
+    while [ $attempt -le $max_attempts ]; do
+        print_status "Checking $service_name (attempt $attempt/$max_attempts)..."
+        
+        if curl -f --connect-timeout 10 --max-time 30 "$url" > /dev/null 2>&1; then
+            print_status "✅ $service_name is running successfully!"
+            return 0
+        fi
+        
+        if [ $attempt -lt $max_attempts ]; then
+            print_status "⏳ $service_name not ready yet, waiting 15 seconds..."
+            sleep 15
+        fi
+        
+        attempt=$((attempt + 1))
+    done
+    
+    print_error "❌ $service_name health check failed after $max_attempts attempts!"
+    return 1
+}
+
+# Check backend first (frontend depends on it)
+if ! check_service "http://localhost:8004/docs" "Backend API"; then
+    print_error "Backend failed to start. Checking logs..."
+    docker compose -f docker-compose.prod.yml logs backend
     exit 1
 fi
 
-if curl -f http://localhost:8004/docs > /dev/null 2>&1; then
-    print_status "✅ Backend is running successfully!"
-else
-    print_error "❌ Backend health check failed!"
+# Check frontend
+if ! check_service "http://localhost:3000" "Frontend"; then
+    print_error "Frontend failed to start. Checking logs..."
+    docker compose -f docker-compose.prod.yml logs frontend
     exit 1
 fi
 

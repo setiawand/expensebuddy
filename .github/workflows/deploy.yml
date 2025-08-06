@@ -40,7 +40,51 @@ jobs:
           docker compose -f docker-compose.prod.yml up -d --build
           
           # Wait for services to be ready
-          sleep 30
+          sleep 60
+          
+          # Health check with retries
+          echo "Performing health check with retries..."
+          
+          # Function to check service with retries
+          check_service() {
+            local url=$1
+            local service_name=$2
+            local max_attempts=10
+            local attempt=1
+            
+            while [ $attempt -le $max_attempts ]; do
+              echo "Checking $service_name (attempt $attempt/$max_attempts)..."
+              
+              if curl -f --connect-timeout 10 --max-time 30 "$url" > /dev/null 2>&1; then
+                echo "✅ $service_name is running successfully!"
+                return 0
+              fi
+              
+              if [ $attempt -lt $max_attempts ]; then
+                echo "⏳ $service_name not ready yet, waiting 15 seconds..."
+                sleep 15
+              fi
+              
+              attempt=$((attempt + 1))
+            done
+            
+            echo "❌ $service_name health check failed after $max_attempts attempts!"
+            return 1
+          }
+          
+          # Check backend first (frontend depends on it)
+          if ! check_service "http://localhost:8004/docs" "Backend API"; then
+            echo "Backend failed to start. Checking logs..."
+            docker compose -f docker-compose.prod.yml logs backend
+            exit 1
+          fi
+          
+          # Check frontend
+          if ! check_service "http://localhost:3000" "Frontend"; then
+            echo "Frontend failed to start. Checking logs..."
+            docker compose -f docker-compose.prod.yml logs frontend
+            exit 1
+          fi
           
           # Comprehensive cleanup after successful deployment
           echo "Performing comprehensive cleanup to save disk space..."
