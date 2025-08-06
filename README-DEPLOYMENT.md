@@ -119,7 +119,46 @@ cd /path/to/your/expensebuddy || exit 1
 cd /home/ubuntu/expensebuddy || exit 1
 ```
 
-## 🚀 Deployment Options
+## 🌐 Accessing Your Application
+
+After successful deployment, your ExpenseBuddy application will be accessible at:
+
+### On Your VM Server:
+- **Frontend**: `http://YOUR_VM_IP:3000`
+- **Backend API**: `http://YOUR_VM_IP:8004`
+- **API Documentation**: `http://YOUR_VM_IP:8004/docs`
+
+### Examples:
+```bash
+# If your VM IP is 192.168.1.100
+Frontend: http://192.168.1.100:3000
+Backend: http://192.168.1.100:8004
+API Docs: http://192.168.1.100:8004/docs
+
+# If your VM has a domain name (e.g., example.com)
+Frontend: http://example.com:3000
+Backend: http://example.com:8004
+API Docs: http://example.com:8004/docs
+```
+
+### Port Configuration:
+- **Frontend**: Exposed on port `3000`
+- **Backend**: Exposed on port `8004`
+- **Internal Communication**: Frontend connects to backend via Docker network (`http://backend:8004`)
+
+### Firewall Configuration:
+Make sure your VM firewall allows incoming connections on ports 3000 and 8004:
+
+```bash
+# For Ubuntu/Debian with ufw
+sudo ufw allow 3000
+sudo ufw allow 8004
+
+# For CentOS/RHEL with firewalld
+sudo firewall-cmd --permanent --add-port=3000/tcp
+sudo firewall-cmd --permanent --add-port=8004/tcp
+sudo firewall-cmd --reload
+```
 
 ### Option 1: Automatic Deployment (GitHub Actions)
 

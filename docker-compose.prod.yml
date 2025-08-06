@@ -3,18 +3,20 @@ services:
     build:
       context: ./backend
     ports:
-      - "8005:8004"
+      - "8004:8004"
     volumes:
       - ./backend/expenses.db:/app/expenses.db
     environment:
       - PYTHONPATH=/app
     restart: unless-stopped
+    networks:
+      - expensebuddy-network
     
   frontend:
     build:
       context: ./frontend
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8005
+      - NEXT_PUBLIC_API_URL=http://backend:8004
       - PORT=3000
       - NODE_ENV=production
     ports:
@@ -22,7 +24,9 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - expensebuddy-network
 
 networks:
-  default:
-    name: expensebuddy-network
+  expensebuddy-network:
+    driver: bridge
