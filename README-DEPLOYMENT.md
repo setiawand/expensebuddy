@@ -123,23 +123,10 @@ cd /home/ubuntu/expensebuddy || exit 1
 
 After successful deployment, your ExpenseBuddy application will be accessible at:
 
-### On Your VM Server:
-- **Frontend**: `http://YOUR_VM_IP:3000`
-- **Backend API**: `http://YOUR_VM_IP:8004`
-- **API Documentation**: `http://YOUR_VM_IP:8004/docs`
-
-### Examples:
-```bash
-# If your VM IP is 192.168.1.100
-Frontend: http://192.168.1.100:3000
-Backend: http://192.168.1.100:8004
-API Docs: http://192.168.1.100:8004/docs
-
-# If your VM has a domain name (e.g., example.com)
-Frontend: http://example.com:3000
-Backend: http://example.com:8004
-API Docs: http://example.com:8004/docs
-```
+### On Your VM Server (103.84.206.186):
+- **Frontend**: `http://103.84.206.186:3000`
+- **Backend API**: `http://103.84.206.186:8004`
+- **API Documentation**: `http://103.84.206.186:8004/docs`
 
 ### Port Configuration:
 - **Frontend**: Exposed on port `3000`
@@ -153,11 +140,26 @@ Make sure your VM firewall allows incoming connections on ports 3000 and 8004:
 # For Ubuntu/Debian with ufw
 sudo ufw allow 3000
 sudo ufw allow 8004
+sudo ufw status
 
 # For CentOS/RHEL with firewalld
 sudo firewall-cmd --permanent --add-port=3000/tcp
 sudo firewall-cmd --permanent --add-port=8004/tcp
 sudo firewall-cmd --reload
+
+# Check if ports are open
+sudo netstat -tlnp | grep -E ':(3000|8004)'
+```
+
+### Testing Access:
+```bash
+# Test from your local machine
+curl -I http://103.84.206.186:3000
+curl -I http://103.84.206.186:8004/docs
+
+# Test from the server itself (via SSH)
+curl -I http://localhost:3000
+curl -I http://localhost:8004/docs
 ```
 
 ### Option 1: Automatic Deployment (GitHub Actions)
