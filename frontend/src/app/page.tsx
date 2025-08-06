@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, FormEvent, useRef } from "react";
+import { useEffect, useState, FormEvent, useRef, useCallback } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 interface Expense {
@@ -10,7 +10,7 @@ interface Expense {
 }
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -27,11 +27,7 @@ export default function Home() {
 
   const getCurrentCurrency = () => currencies.find(c => c.code === currency) || currencies[0];
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
-
-  const fetchExpenses = async () => {
+  const fetchExpenses = useCallback(async () => {
     try {
       const response = await fetch(`${API_URL}/expenses`);
       if (response.ok) {
@@ -41,7 +37,11 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to fetch expenses:", error);
     }
-  };
+  }, [API_URL]);
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [fetchExpenses]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
