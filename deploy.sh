@@ -26,15 +26,15 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Check if Docker is installed
+# Check if Docker Compose is available
 if ! command -v docker &> /dev/null; then
     print_error "Docker is not installed. Please install Docker first."
     exit 1
 fi
 
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    print_error "Docker Compose is not installed. Please install Docker Compose first."
+# Check Docker Compose (V2 syntax)
+if ! docker compose version &> /dev/null; then
+    print_error "Docker Compose is not available. Please install Docker Compose plugin."
     exit 1
 fi
 
@@ -48,7 +48,7 @@ fi
 
 # Stop existing services
 print_status "Stopping existing services..."
-docker-compose -f docker-compose.prod.yml down || {
+docker compose -f docker-compose.prod.yml down || {
     print_warning "No existing services to stop."
 }
 
@@ -58,7 +58,7 @@ docker image prune -f || true
 
 # Build and start services
 print_status "Building and starting services..."
-docker-compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 
 # Wait for services to be ready
 print_status "Waiting for services to start..."

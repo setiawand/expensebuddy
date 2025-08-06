@@ -26,13 +26,19 @@ sudo apt update && sudo apt upgrade -y
 # Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
+
+# Add your user to docker group (to run docker without sudo)
 sudo usermod -aG docker $USER
 
-# Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+# Log out and log back in, or run:
+newgrp docker
 
-# Logout and login again for group changes to take effect
+# Verify Docker installation
+docker --version
+
+# Docker Compose V2 is included with Docker by default
+# Verify Docker Compose installation
+docker compose version
 ```
 
 ### 2. Clone Repository on Server
@@ -124,10 +130,22 @@ Once configured, deployment happens automatically:
 
 ### Option 2: Manual Deployment
 
-On your server:
+If you prefer to deploy manually or need to troubleshoot:
+
 ```bash
+# SSH into your server
+ssh username@your_server_ip
+
+# Navigate to project directory
 cd /path/to/expensebuddy
+
+# Run deployment script
 ./deploy.sh
+
+# Or run commands manually:
+git pull origin master
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ## 🔍 Monitoring and Troubleshooting
