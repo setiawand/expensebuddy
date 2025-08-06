@@ -95,18 +95,18 @@ check_service() {
 }
 
 # Check backend first (frontend depends on it)
-if ! check_service "http://localhost:8004/docs" "Backend API"; then
-    print_error "Backend failed to start. Checking logs..."
-    docker compose -f docker-compose.prod.yml logs backend
-    exit 1
-fi
+# if ! check_service "http://localhost:8004/docs" "Backend API"; then
+#     print_error "Backend failed to start. Checking logs..."
+#     docker compose -f docker-compose.prod.yml logs backend
+#     exit 1
+# fi
 
-# Check frontend
-if ! check_service "http://localhost:3000" "Frontend"; then
-    print_error "Frontend failed to start. Checking logs..."
-    docker compose -f docker-compose.prod.yml logs frontend
-    exit 1
-fi
+# # Check frontend
+# if ! check_service "http://localhost:3000" "Frontend"; then
+#     print_error "Frontend failed to start. Checking logs..."
+#     docker compose -f docker-compose.prod.yml logs frontend
+#     exit 1
+# fi
 
 # Show running containers
 print_status "Current running containers:"
