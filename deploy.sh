@@ -82,7 +82,34 @@ fi
 
 # Show running containers
 print_status "Current running containers:"
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
+
+# Comprehensive cleanup after successful deployment
+print_status "Performing comprehensive cleanup to save disk space..."
+
+# Remove unused Docker images (not just dangling ones)
+print_status "Removing unused Docker images..."
+docker image prune -a -f || true
+
+# Remove unused Docker volumes
+print_status "Removing unused Docker volumes..."
+docker volume prune -f || true
+
+# Remove unused Docker networks
+print_status "Removing unused Docker networks..."
+docker network prune -f || true
+
+# Remove Docker build cache
+print_status "Removing Docker build cache..."
+docker builder prune -f || true
+
+# Clean up system (containers, networks, images, build cache)
+print_status "Performing Docker system cleanup..."
+docker system prune -f || true
+
+# Show disk usage after cleanup
+print_status "Docker disk usage after cleanup:"
+docker system df
 
 print_status "🎉 Deployment completed successfully!"
 print_status "Frontend: http://localhost:3000"
@@ -90,5 +117,5 @@ print_status "Backend API: http://localhost:8004"
 print_status "API Documentation: http://localhost:8004/docs"
 
 echo ""
-print_status "To view logs, run: docker-compose -f docker-compose.prod.yml logs -f"
-print_status "To stop services, run: docker-compose -f docker-compose.prod.yml down"
+print_status "To view logs, run: docker compose -f docker-compose.prod.yml logs -f"
+print_status "To stop services, run: docker compose -f docker-compose.prod.yml down"

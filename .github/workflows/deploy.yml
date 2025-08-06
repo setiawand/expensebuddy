@@ -39,8 +39,30 @@ jobs:
           # Build and start services
           docker compose -f docker-compose.prod.yml up -d --build
           
-          # Clean up unused Docker images
-          docker image prune -f
+          # Wait for services to be ready
+          sleep 30
+          
+          # Comprehensive cleanup after successful deployment
+          echo "Performing comprehensive cleanup to save disk space..."
+          
+          # Remove unused Docker images (not just dangling ones)
+          docker image prune -a -f || true
+          
+          # Remove unused Docker volumes
+          docker volume prune -f || true
+          
+          # Remove unused Docker networks
+          docker network prune -f || true
+          
+          # Remove Docker build cache
+          docker builder prune -f || true
+          
+          # Clean up system (containers, networks, images, build cache)
+          docker system prune -f || true
+          
+          # Show disk usage after cleanup
+          echo "Docker disk usage after cleanup:"
+          docker system df
           
           echo "Deployment completed successfully!"
         EOF

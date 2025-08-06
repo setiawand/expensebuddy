@@ -148,7 +148,43 @@ docker compose -f docker-compose.prod.yml down
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-## 🔍 Monitoring and Troubleshooting
+## 🧹 Disk Space Management
+
+The deployment script includes comprehensive cleanup to save VM disk space:
+
+### Automatic Cleanup (After Each Deployment)
+- **Unused Docker images** (including intermediate layers)
+- **Unused Docker volumes** (orphaned data)
+- **Unused Docker networks** (disconnected networks)
+- **Docker build cache** (temporary build files)
+- **System-wide cleanup** (containers, networks, images, cache)
+
+### Manual Cleanup Commands
+```bash
+# Remove all unused Docker resources
+docker system prune -a -f
+
+# Remove specific resources
+docker image prune -a -f      # Remove unused images
+docker volume prune -f        # Remove unused volumes
+docker network prune -f       # Remove unused networks
+docker builder prune -f       # Remove build cache
+
+# Check disk usage
+docker system df
+```
+
+### Monitoring Disk Usage
+```bash
+# Check overall disk usage
+df -h
+
+# Check Docker disk usage
+docker system df
+
+# Check largest directories
+du -sh /* 2>/dev/null | sort -hr | head -10
+``` and Troubleshooting
 
 ### Check Service Status
 ```bash
