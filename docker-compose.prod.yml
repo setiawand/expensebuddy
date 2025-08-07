@@ -15,12 +15,12 @@ services:
   frontend:
     build:
       context: ./frontend
+    ports:
+      - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://backend:8004
       - PORT=3000
       - NODE_ENV=production
-    ports:
-      - "3000:3000"
     depends_on:
       - backend
     restart: unless-stopped
