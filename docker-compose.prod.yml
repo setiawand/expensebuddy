@@ -14,7 +14,7 @@ services:
     build:
       context: ./frontend
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8004
+      - NEXT_PUBLIC_API_URL=/api
       - PORT=3000
       - NODE_ENV=production
     depends_on:
